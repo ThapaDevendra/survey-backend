@@ -28,3 +28,41 @@ exports.create = async (req, res) => {
         });
     })
 }
+
+
+function getSingleUser(id) {
+    return  User.findByPk(id, { include: [] })
+  }
+
+//Update User
+
+exports.update = async (req, res) => {
+    if(!req.params.id){
+      res.status(400).send({
+        message: 'User ID can not be empty!!'
+  
+      })
+      return;
+    }
+  
+    const id = req.params.id;
+    await getSingleUser(id).then(data =>{
+        User.update(req.body, {where: {id: id }}).then(num => {
+          if(num == 1){
+            res.send({
+  
+              message: 'User info updated successfully.'
+            });
+          }else{
+            res.send({
+              message: `Cannot update User with id=${id}`
+  
+            })
+          }
+        }).catch(err =>{
+          res.status(500).send({
+            message: err.message + 'with id: ' + id
+          })
+        })
+      })
+    }
