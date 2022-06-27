@@ -4,8 +4,11 @@
   "description": "Node.js Rest Apis with Express, Sequelize & MySQL",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "serve": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bundle": "mkdir deploy && cp -r app/config app/controllers app/models app/routes server.js package.json package-lock.json survey-backend.service deploy && rm deploy/config/dbConfig.js && mv deploy/config/prod.dbConfig.js deploy/config/dbConfig.js"
+
   },
   "repository": {
     "type": "git",
