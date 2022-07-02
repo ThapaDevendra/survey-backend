@@ -38,7 +38,7 @@ db.surveys.hasMany(db.questions, {
 
   db.surveys.hasMany(db.survey_responses, {
     foreignKey: 'surveyId',
-    as: 'survey_survey_responses'
+    as: 'survey_responses'
   })
 
   db.respondents.hasMany(db.survey_responses, {
