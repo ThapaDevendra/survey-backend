@@ -18,15 +18,19 @@ const db = require('./index.js');
 
 //db.sequelize.sync();
 //for devel to recreate each time database 
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and re-sync db.");
-});
+
+// db.sequelize.sync({ force: true }).then(() => {
+//   console.log("Drop and re-sync db.");
+// });
 
 app.get('/', (req, res) => {
     res.send('<h2> Welcome to Survey Backend! <h2>');
 })
 
 require('./app/routes/userRoutes.js')(app);
+require('./app/routes/survey.routes.js')(app);
+require('./app/routes/question.routes.js')(app);
+require('./app/routes/respondent.routes.js')(app);
 
 //port to listen for requests
 const PORT = process.env.PORT || 3000;
