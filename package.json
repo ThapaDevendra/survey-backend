@@ -8,7 +8,6 @@
     "serve": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "bundle": "mkdir deploy && cp -r app/config app/controllers app/models app/routes server.js package.json package-lock.json survey-backend.service deploy && rm deploy/config/dbConfig.js && mv deploy/config/prod.db.config.js deploy/config/dbConfig.js"
-
   },
   "repository": {
     "type": "git",
@@ -29,6 +28,7 @@
   },
   "homepage": "https://github.com/ThapaDevendra/survey-backend#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "express": "^4.18.1",
     "mysql2": "^2.3.3",

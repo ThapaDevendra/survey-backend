@@ -1,5 +1,6 @@
 const db = require('../../index.js');
 const User = db.users;
+const bcrypt = require('bcrypt');
 
 exports.getAll = async (req, res) => {
     await User.findAll({}).then(data => {
@@ -19,7 +20,10 @@ exports.create = async (req, res) => {
         }) 
         return;
     }
-    await User.create(req.body).then(data => {
+    const salt = await bcrypt.genSalt();
+    const encryptPassword = await bcrypt.hash(req.body.password, salt);
+    let data = {username: req.body.username, role: req.body.role, email: req.body.email, password: encryptPassword}
+    await User.create(data).then(data => {
         res.send(data);
     }).catch(err => {
         res.status(500).send({
@@ -28,6 +32,32 @@ exports.create = async (req, res) => {
         });
     })
 }
+
+//user logIn verification
+exports.logIn = async (req, res) => {
+  const {email, password} = req.body;
+  console.log('this is body email',email);
+  console.log('this is body password', password)
+
+  await User.findOne({where: {email: email}}).than(data => {
+    //const validPass = bcrypt.compare(password, data.password);
+    // if(validPass){
+       console.log('validPass');
+       res.send(data)
+    // }
+  })
+  // const user = await db('survey').first('*').where({email: email})
+  // if(user)
+  // {
+  //   const validPass = await bcrypt.compare(password, user.password)
+  //   if(validPass){
+  //     res.status(200).json('Valid pass word')
+  //   }else{
+  //     res.json('wrong password')
+  //   }
+  // }
+}
+
 
 exports.delete = (req, res) => {
     const id = req.params.id;
