@@ -28,12 +28,12 @@ db.responses = require('./app/models/response.js')(sequelize, Sequelize);
 // oneToMany Relation
 db.surveys.hasMany(db.questions, {
     foreignKey: 'surveyId',
-    as: 'surveys'
+    as: 'questions'
   })
   
   db.questions.belongsTo(db.surveys, {
     foreignKey: 'surveyId',
-    as: 'questions'
+    as: 'survey'
   })
 
   db.surveys.hasMany(db.survey_responses, {
