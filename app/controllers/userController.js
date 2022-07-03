@@ -121,3 +121,15 @@ exports.update = async (req, res) => {
       })
     }
 
+//Find a single user
+
+exports.findOne = async (req, res) => {
+  await getSingleUser(req.params.id).then((data) => {
+     res.status(200).send(data);
+     return;
+    })
+    .catch((err) => {
+      console.log(">> Error while finding user: ", err)
+  });
+};
+
