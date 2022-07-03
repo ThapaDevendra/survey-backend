@@ -36,26 +36,20 @@ exports.create = async (req, res) => {
 //user logIn verification
 exports.logIn = async (req, res) => {
   const {email, password} = req.body;
-  console.log('this is body email',email);
-  console.log('this is body password', password)
 
-  await User.findOne({where: {email: email}}).than(data => {
-    //const validPass = bcrypt.compare(password, data.password);
-    // if(validPass){
-       console.log('validPass');
-       res.send(data)
-    // }
+  const user = await User.findOne({where: {email: email}}).catch(err => {
+    res.status(500).send({
+      message: 
+      err.message || 'Error occured while retrieving user'
+    })
   })
-  // const user = await db('survey').first('*').where({email: email})
-  // if(user)
-  // {
-  //   const validPass = await bcrypt.compare(password, user.password)
-  //   if(validPass){
-  //     res.status(200).json('Valid pass word')
-  //   }else{
-  //     res.json('wrong password')
-  //   }
-  // }
+  const validPass = await bcrypt.compare(password, user.password);
+  if(validPass){
+    res.send(user);
+  }
+  else{
+    res.status(404).send('User info do not match with the database');
+  }
 }
 
 
