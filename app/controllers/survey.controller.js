@@ -41,3 +41,20 @@ exports.getSurveyQuestions =  async (req, res) => {
   });
   res.status(200).send(data)
 }
+
+
+function getSingleSurvey(id) {
+    return  Survey.findByPk(id, { include: [] })
+  }
+
+//Get one single survey
+
+exports.findOne = async (req, res) => {
+    await getSingleSurvey(req.params.id).then((data) => {
+       res.status(200).send(data);
+       return;
+      })
+      .catch((err) => {
+        console.log(">> Error while finding survey: ", err)
+    });
+  };
