@@ -4,7 +4,7 @@ const app = express();
 
 //listen from port
  var corsOptions = {
-    origin: 'http://localhost/3001'
+    origin: 'http://localhost:3001'
  };
 app.use(cors(corsOptions));
 
@@ -16,9 +16,9 @@ app.use(express.urlencoded({extended: true}));
 
 const db = require('./index.js');
 
-//db.sequelize.sync();
-//for devel to recreate each time database 
+db.sequelize.sync();
 
+//for devel to recreate each time database 
 // db.sequelize.sync({ force: true }).then(() => {
 //   console.log("Drop and re-sync db.");
 // });

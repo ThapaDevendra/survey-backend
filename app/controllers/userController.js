@@ -1,5 +1,6 @@
 const db = require('../../index.js');
 const User = db.users;
+const bcrypt = require('bcrypt');
 
 exports.getAll = async (req, res) => {
     await User.findAll({}).then(data => {
@@ -19,7 +20,10 @@ exports.create = async (req, res) => {
         }) 
         return;
     }
-    await User.create(req.body).then(data => {
+    const salt = await bcrypt.genSalt();
+    const encryptPassword = await bcrypt.hash(req.body.password, salt);
+    let data = {username: req.body.username, role: req.body.role, email: req.body.email, password: encryptPassword}
+    await User.create(data).then(data => {
         res.send(data);
     }).catch(err => {
         res.status(500).send({
@@ -28,6 +32,32 @@ exports.create = async (req, res) => {
         });
     })
 }
+
+//user logIn verification
+exports.logIn = async (req, res) => {
+  const {email, password} = req.body;
+
+  const user = await User.findOne({where: {email: email}});
+
+  if(user == null)
+  { 
+    return res.status(400).send('Cannot find user')
+  }
+
+  try
+  {
+    if(await bcrypt.compare(password, user.password)){
+      res.send(user)
+    }else{
+      res.status(400).send('Invalid password')
+    }
+  }catch{
+    res.send(500).send('Something went wrong while retrieving user information.')
+  }
+    
+
+}
+
 
 exports.delete = (req, res) => {
     const id = req.params.id;
