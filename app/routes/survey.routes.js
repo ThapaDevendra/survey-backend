@@ -5,6 +5,7 @@ module.exports = app => {
 
     router.post('/', survey.create);
     router.get('/', survey.getAll);
+    router.get('/:id', survey.findOne);
     router.get('/:surveyId/questions', survey.getSurveyQuestions);
 
     router.post('/:surveyId/questions', question.create);
