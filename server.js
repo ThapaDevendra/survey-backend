@@ -31,6 +31,7 @@ require('./app/routes/userRoutes.js')(app);
 require('./app/routes/survey.routes.js')(app);
 require('./app/routes/question.routes.js')(app);
 require('./app/routes/respondent.routes.js')(app);
+require('./app/routes/survey_response.routes.js')(app);
 
 //port to listen for requests
 const PORT = process.env.PORT || 3000;
