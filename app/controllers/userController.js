@@ -37,19 +37,25 @@ exports.create = async (req, res) => {
 exports.logIn = async (req, res) => {
   const {email, password} = req.body;
 
-  const user = await User.findOne({where: {email: email}}).catch(err => {
-    res.status(500).send({
-      message: 
-      err.message || 'Error occured while retrieving user'
-    })
-  })
-  const validPass = await bcrypt.compare(password, user.password);
-  if(validPass){
-    res.send(user);
+  const user = await User.findOne({where: {email: email}});
+
+  if(user == null)
+  { 
+    return res.status(400).send('Cannot find user')
   }
-  else{
-    res.status(404).send('User info do not match with the database');
+
+  try
+  {
+    if(await bcrypt.compare(password, user.password)){
+      res.send(user)
+    }else{
+      res.send('Invalid password')
+    }
+  }catch{
+    res.send(500).send('Something went wrong while retrieving user information.')
   }
+    
+
 }
 
 
