@@ -3,7 +3,7 @@ const SurveyResponse = db.survey_responses;
 const Response = db.responses;
 
 exports.create = async (req, res) => {
-    console.log("req:: ", req.params)
+    console.log("req.params:: ", req.params)
     if(!req.params.surveyId || !req.params.respondentId){
         res.status(400).send({
             message: 'surveyId or respondentId can not be empty!'
@@ -22,21 +22,21 @@ exports.create = async (req, res) => {
 }
 
 const createResponse = async (responseData, reqBody, res) => {
-    console.log("req:: ", responseData);
+    console.log("responseData:: ", responseData);
 
     // surveyResponseId, respondentId and questionId have to created in DB first
     let mockData = [
         {
-        "surveyResponseId": 46,
-        "respondentId": 3,
-        "answer": "Threees answer",
-        "questionId": 3
+        "surveyResponseId": 2,
+        "respondentId": 1,
+        "answer": "111 answer",
+        "questionId": 1
     },
     {
-        "surveyResponseId": 46,
-        "respondentId": 4,
-        "answer": "4444 answer",
-        "questionId": 4
+        "surveyResponseId": 2,
+        "respondentId": 1,
+        "answer": "222 answer",
+        "questionId": 2
     }
 ]
      await Response.bulkCreate(mockData)
@@ -50,12 +50,21 @@ const createResponse = async (responseData, reqBody, res) => {
 }
 
 exports.getAll = async (req, res) => {
-  await SurveyResponse.findAll({}).then(data => {
-      res.send(data);
-  }).catch(err => {
-      res.status(500).send({
-      message:
-          err.message || "Error occured while retrieving SurveyResponse"
-      });
-  });
+    const surveyId = req.body.surveyId;
+    const respondentId = req.body.respondentId 
+    const data =  await SurveyResponse.findAll({
+        include: [{
+            model: Response,
+            as: 'responses'
+        }],
+        // , respondentId: respondentId
+        where: { surveyId: surveyId, respondentId: respondentId }
+    })
+    .catch(err => {
+        res.status(500).send({
+        message:
+            err.message || "Error occured while retrieving SurveyResponse"
+        });
+    });
+    res.status(200).send(data);
 }
