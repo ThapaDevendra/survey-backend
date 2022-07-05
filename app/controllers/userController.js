@@ -49,7 +49,7 @@ exports.logIn = async (req, res) => {
     if(await bcrypt.compare(password, user.password)){
       res.send(user)
     }else{
-      res.send('Invalid password')
+      res.status(400).send('Invalid password')
     }
   }catch{
     res.send(500).send('Something went wrong while retrieving user information.')
