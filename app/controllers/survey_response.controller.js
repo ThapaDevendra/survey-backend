@@ -12,7 +12,11 @@ exports.create = async (req, res) => {
     }
 
     await SurveyResponse.create(req.params).then(data => {
-        createResponse(data, req, res);
+
+        const responses = req.body.responses.map(o => ({ ...o, surveyResponseId: data.id }));
+        console.log("responses:: ", responses)
+        createResponse(data, responses, res);
+
     }).catch(err => {
         return res.status(500).send({
             message: 
@@ -21,25 +25,9 @@ exports.create = async (req, res) => {
     });
 }
 
-const createResponse = async (responseData, reqBody, res) => {
-    console.log("responseData:: ", responseData);
+const createResponse = async (responseData, responses, res) => {
 
-    // surveyResponseId, respondentId and questionId have to created in DB first
-    let mockData = [
-        {
-        "surveyResponseId": 2,
-        "respondentId": 1,
-        "answer": "111 answer",
-        "questionId": 1
-    },
-    {
-        "surveyResponseId": 2,
-        "respondentId": 1,
-        "answer": "222 answer",
-        "questionId": 2
-    }
-]
-     await Response.bulkCreate(mockData)
+     await Response.bulkCreate(responses)
      .catch(err => {
         res.status(500).send({
             message: 
