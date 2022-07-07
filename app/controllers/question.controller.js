@@ -2,26 +2,22 @@ const db = require('../../index.js');
 const Question = db.questions;
 
 exports.create = async (req, res) => {
-    if(!req.body.text){
+    if(!req.body || !req.params.surveyId ){
         res.status(400).send({
-            message: 'question text can not be empty!'
+            message: 'surveyId or questions can not be empty!'
         }) 
         return;
     }
 
-    // Create a Track
-  const question = {
-    text: req.body.text,
-    surveyId: req.params.surveyId
-  };
-
-  console.log("question:: ", question)
-    await Question.create(question).then(data => {
+    const questions = req.body.questions.map(o => ({ ...o, surveyId: req.params.surveyId }));
+    console.log("questions:: ", questions)
+    
+    await Question.bulkCreate(questions).then(data => {
         res.send(data);
     }).catch(err => {
         res.status(500).send({
             message: 
-                err.message || 'Error occured while creating Question.'
+                err.message || 'Error occured while saving Questions.'
         });
     })
 }

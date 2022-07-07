@@ -1,10 +1,9 @@
 module.exports = (sequelize, Sequelize) => {
     const Response = sequelize.define("response", {
-      id: {
+      surveyResponseId: {
         type: Sequelize.INTEGER,
-        autoIncrement: true,
         allowNull: false,
-        primaryKey: true
+        key: true
       },
       questionId: {
         type: Sequelize.INTEGER,

@@ -48,7 +48,12 @@ db.surveys.hasMany(db.questions, {
 
   db.questions.hasMany(db.responses, {
     foreignKey: 'questionId',
-    as: 'question_responses'
+    as: 'responses'
+  })
+
+  db.responses.belongsTo(db.questions, {
+    foreignKey: 'questionId',
+    as: 'question'
   })
 
   db.respondents.hasMany(db.responses, {
@@ -56,19 +61,14 @@ db.surveys.hasMany(db.questions, {
     as: 'respondent_responses'
   })
 
-//   db.responses.belongsTo(db.questions, {
-//     foreignKey: 'questionId',
-//     as: 'question_responses'
-//   })
-
-//   db.responses.belongsTo(db.respondents, {
-//     foreignKey: 'respondentId',
-//     as: 'respondent_responses'
-//   })
-
    db.survey_responses.hasMany(db.responses, {
     foreignKey: 'surveyResponseId',
-    as: 'survey_response_responses'
+    as: 'responses'
+  })
+
+    db.responses.belongsTo(db.survey_responses, {
+    foreignKey: 'surveyResponseId',
+    as: 'survey_response'
   })
 
 module.exports = db;
