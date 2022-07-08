@@ -1,5 +1,5 @@
 module.exports = {
-    HOST: 'localhost',
+    HOST: 'http://ec2-3-17-139-170.us-east-2.compute.amazonaws.com/phtmyadmin',
     USER: 'root',
     PASSWORD: 'Un!versity2022',
     DB: 'survey',
