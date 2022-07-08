@@ -1,3 +1,4 @@
+//user routes
 module.exports = app => {
     const users = require('../controllers/userController.js');
     
@@ -11,6 +12,6 @@ module.exports = app => {
     router.post('/:id', users.update);
     router.get('/:id',users.findOne)
 
-
+    
     app.use('/api/users', router);
 };
