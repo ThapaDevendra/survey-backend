@@ -1,5 +1,5 @@
 module.exports = {
-    HOST: 'http://ec2-3-17-139-170.us-east-2.compute.amazonaws.com/phpmyadmin',
+    HOST: 'localhost',
     USER: 'root',
     PASSWORD: 'Un!versity2022',
     DB: 'survey',
