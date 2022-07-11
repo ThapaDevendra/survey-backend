@@ -24,7 +24,10 @@ exports.create = async (req, res) => {
     const encryptPassword = await bcrypt.hash(req.body.password, salt);
     let data = {username: req.body.username, role: req.body.role, email: req.body.email, password: encryptPassword}
     await User.create(data).then(data => {
-        res.send(data);
+      const newUser = Object.keys(data.dataValues).filter(
+        (key) => key !== 'password'
+      ).reduce((cur, key) => {return Object.assign(cur, {[key]: data.dataValues[key]})}, {});
+        res.send(newUser);
     }).catch(err => {
         res.status(500).send({
             message: 
@@ -47,7 +50,10 @@ exports.logIn = async (req, res) => {
   try
   {
     if(await bcrypt.compare(password, user.password)){
-      res.send(user)
+      const loginUser = Object.keys(user.dataValues).filter(
+        (key) => key !== 'password'
+      ).reduce((cur, key) => {return Object.assign(cur, {[key]: user.dataValues[key]})}, {});
+      res.send(loginUser )
     }else{
       res.status(400).send('Invalid password')
     }
