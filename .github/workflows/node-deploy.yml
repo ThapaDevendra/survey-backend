@@ -12,8 +12,10 @@ jobs:
         steps:
             - uses: actions/checkout@v2
               with:
-                  ref: dev
-            - uses: actions/setup-node@v1
+                  ref: de
+            - uses: actions/setup-node@v3v
+              with:
+                node-version: 16
             - run: npm install
             - run: npm run bundle
             - name: Deploy to Server
@@ -22,7 +24,7 @@ jobs:
                   SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
                   ARGS: '-rltgoDzvO --delete'
                   SOURCE: 'deploy/'
-                  REMOTE_HOST: 'ec2-18-223-188-246.us-east-2.compute.amazonaws.com/phpmyadmin' 
+                  REMOTE_HOST: 'ec2-18-223-188-246.us-east-2.compute.amazonaws.com' 
                   REMOTE_USER: ubuntu
                   TARGET: 'nodeapps/survey-backend'
             - name: Execute SSH commmands on remote server
@@ -30,7 +32,7 @@ jobs:
               env:
                   NAME: 'Root'
               with:
-                  hosts: 'ubuntu@ec2-18-223-188-246.us-east-2.compute.amazonaws.com/phpmyadmin'
+                  hosts: 'ubuntu@ec2-18-223-188-246.us-east-2.compute.amazonaws.com'
                   privateKey: ${{ secrets.SERVER_SSH_KEY }}
                   debug: false
                   command: |
