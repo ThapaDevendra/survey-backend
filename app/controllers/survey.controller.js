@@ -1,4 +1,4 @@
-const db = require('../../index.js');
+const db = require('../models/index.js');
 const Survey = db.surveys;
 const Question = db.questions;
 

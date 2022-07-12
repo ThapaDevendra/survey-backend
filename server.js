@@ -14,7 +14,7 @@ app.use(express.json());
 //parse incoming requests with urlencoded payloads and is based on body-parser
 app.use(express.urlencoded({extended: true}));
 
-const db = require('./index.js');
+const db = require('./app/models/index.js');
 
 //db.sequelize.sync();
 
