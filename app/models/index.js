@@ -1,4 +1,4 @@
-const dbConfig = require('./app/config/dbConfig.js');
+const dbConfig = require('../config/dbConfig.js');
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize( dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     host: dbConfig.HOST,
@@ -16,13 +16,13 @@ const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.users = require('./app/models/users.js')(sequelize, Sequelize);
+db.users = require('./users.js')(sequelize, Sequelize);
 
-db.surveys = require('./app/models/survey.js')(sequelize, Sequelize);
-db.questions = require('./app/models/question.js')(sequelize, Sequelize);
-db.respondents = require('./app/models/respondent.js')(sequelize, Sequelize);
-db.survey_responses = require('./app/models/survey_response.js')(sequelize, Sequelize);
-db.responses = require('./app/models/response.js')(sequelize, Sequelize);
+db.surveys = require('./survey.js')(sequelize, Sequelize);
+db.questions = require('./question.js')(sequelize, Sequelize);
+db.respondents = require('./respondent.js')(sequelize, Sequelize);
+db.survey_responses = require('./survey_response.js')(sequelize, Sequelize);
+db.responses = require('./response.js')(sequelize, Sequelize);
 
 
 // oneToMany Relation
