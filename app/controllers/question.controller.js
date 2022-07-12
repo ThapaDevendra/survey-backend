@@ -1,4 +1,4 @@
-const db = require('../../index.js');
+const db = require('../models/index.js');
 const Question = db.questions;
 
 exports.create = async (req, res) => {
