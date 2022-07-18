@@ -58,3 +58,26 @@ exports.findOne = async (req, res) => {
         console.log(">> Error while finding survey: ", err)
     });
   };
+
+  exports.delete = (req, res) => {
+    const id = req.params.id;
+    Survey.destroy({
+      where: { id: id }
+    })
+      .then(num => {
+        if (num == 1) {
+          res.send({
+            message: "Survey was deleted successfully!"
+          });
+        } else {
+          res.send({
+            message: `Cannot delete Survey with id=${id}. Maybe Survey was not found!`
+          });
+        }
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: "Could not delete Survey with id=" + id
+        });
+      });
+  };
