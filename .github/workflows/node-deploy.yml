@@ -41,6 +41,5 @@ jobs:
                       sudo mkdir app
                       sudo mv config controllers middleware models routes app
                       sudo cp survey-backend.service /lib/systemd/system/survey-backend.service
-                      sudo rm survey-backend.service
                       sudo systemctl daemon-reload
                       sudo systemctl start survey-backend
