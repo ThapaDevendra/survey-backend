@@ -39,7 +39,7 @@ jobs:
                       npm install
                       sudo mkdir app
                       sudo mv config controllers middleware models routes app
-                      sudo rmdir config controllers middleware models routes
+                      sudo rm -rf config controllers middleware models routes
                       sudo systemctl stop survey-backend
                       sudo cp survey-backend.service /lib/systemd/system/survey-backend.service
                       sudo rm survey-backend.service
