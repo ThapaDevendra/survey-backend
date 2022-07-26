@@ -1,16 +1,17 @@
 //user routes
-module.exports = app => {
-    const users = require('../controllers/userController.js');
-    
+const users = require('../controllers/userController.js');
+var authJwt = require('../middleware/authJwt')
+
+module.exports = (app) => {    
     var router = require('express').Router();
 
-    router.get('/', users.getAll);
-    router.post('/', users.create);
+    router.get('/', authJwt.verifyToken, users.getAll);
+    router.post('/', authJwt.verifyToken, users.create);
     router.post('/login', users.logIn);
 
-    router.delete('/:id',users.delete);
-    router.post('/:id', users.update);
-    router.get('/:id',users.findOne)
+    router.delete('/:id', authJwt.verifyToken, users.delete);
+    router.post('/:id', authJwt.verifyToken, users.update);
+    router.get('/:id',authJwt.verifyToken, users.findOne)
 
     
     app.use('/api/users', router);
