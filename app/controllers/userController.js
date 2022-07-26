@@ -1,6 +1,8 @@
+require("dotenv").config(); //Loads .env file contents into process.env.
 const db = require("../models/index.js");
 const User = db.users;
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 exports.getAll = async (req, res) => {
   await User.findAll({})
@@ -21,6 +23,7 @@ exports.create = async (req, res) => {
     });
     return;
   }
+
   const salt = await bcrypt.genSalt();
   const encryptPassword = await bcrypt.hash(req.body.password, salt);
   let data = {
@@ -29,6 +32,7 @@ exports.create = async (req, res) => {
     email: req.body.email,
     password: encryptPassword,
   };
+
   await User.create(data)
     .then((data) => {
       const newUser = Object.keys(data.dataValues)
@@ -45,32 +49,34 @@ exports.create = async (req, res) => {
     });
 };
 
-//user logIn verification
+//user logIn authentication/verification
 exports.logIn = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ where: { email: email } });
 
-  if (user == null) {
-    return res.status(400).send({ message: "Cannot find user" });
+  if (!user) {
+    return res.status(404).send("User Not Found");
   }
 
   try {
     if (await bcrypt.compare(password, user.password)) {
+      // remove password to send the object to UI after authentication
       const loginUser = Object.keys(user.dataValues)
         .filter((key) => key !== "password")
         .reduce((cur, key) => {
           return Object.assign(cur, { [key]: user.dataValues[key] });
         }, {});
+
+      //create object token using secret key
+      loginUser.token = jwt.sign({ loginUser }, process.env.SECRET_TOKEN);
       res.send(loginUser);
     } else {
-      res.status(401).send({
-        message: "Invalid Password",
-      });
+      res.status(401).send("Invalid password");
     }
   } catch {
     res
-      .status(500)
+      .send(500)
       .send("Something went wrong while retrieving user information.");
   }
 };
@@ -103,7 +109,6 @@ function getSingleUser(id) {
 }
 
 //Update User
-
 exports.update = async (req, res) => {
   if (!req.params.id) {
     res.status(400).send({
@@ -128,7 +133,7 @@ exports.update = async (req, res) => {
       })
       .catch((err) => {
         res.status(500).send({
-          message: err.message + " with id: " + id,
+          message: err.message + "with id: " + id,
         });
       });
   });
@@ -137,12 +142,27 @@ exports.update = async (req, res) => {
 //Find a single user
 
 exports.findOne = async (req, res) => {
-  await getSingleUser(req.params.id)
+  const id = req.params.id;
+  const header = req.header;
+  console.log("this is the req", header);
+  User.findOne({ where: { id: id } })
     .then((data) => {
-      res.status(200).send(data);
-      return;
+      if (data) {
+        const object = Object.keys(data.dataValues)
+          .filter((key) => key !== "password")
+          .reduce((cur, key) => {
+            return Object.assign(cur, { [key]: data.dataValues[key] });
+          }, {});
+        res.send(object);
+      } else {
+        res.status(404).send({
+          message: "Cannot find the object",
+        });
+      }
     })
     .catch((err) => {
-      console.log(">> Error while finding user: ", err);
+      res.status(500).send({
+        message: err.message,
+      });
     });
 };
