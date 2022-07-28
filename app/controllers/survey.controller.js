@@ -118,20 +118,6 @@ function getSingleSurvey(id) {
   return Survey.findByPk(id, { include: [] });
 }
 
- exports.getSurveyQuestions = async (req, res) => {
-   const id = req.params.surveyId;
-   const data = await Survey.findOne({
-     include: [
-       {
-         model: Question,
-         as: "questions",
-       },
-     ],
-     where: { id: id },
-   });
-   res.status(200).send(data);
- };
-
 
 
 
