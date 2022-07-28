@@ -10,9 +10,9 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      description: {
-        type: Sequelize.STRING,
-        allowNull: true,
+      userID: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
       },
     });
     return Survey;
