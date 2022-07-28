@@ -14,6 +14,14 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
         allowNull: false,
         key: true,
+      },
+      questionType: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
+      multipleChoices:{
+        type: Sequelize.STRING,
+        allowNull: true
       }
     });
     return Question;
