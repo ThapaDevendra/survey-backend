@@ -4,12 +4,11 @@ module.exports = app => {
     var router = require('express').Router();
 
     router.post('/', survey.create);
-    router.get('/getAllSurveys/:userID', survey.getAll); 
-    router.get('/:surveyID', survey.findOne); 
-    router.delete('/:surveyID', survey.delete);
-    router.put('/:surveyID', survey.update)
-    // router.post('/:surveyId/questions', question.create);
-    // router.get('/:surveyId/questions', question.getAll);
+    router.get('/:id', survey.getAll); 
+    router.get('/:id', survey.findOne); 
+    router.delete('/:id', survey.delete);
+    router.post('/:surveyId/questions', question.create);
+    router.get('/:surveyId/questions', question.getAll);
     
 
     app.use('/api/surveys', router);
