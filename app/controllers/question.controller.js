@@ -1,6 +1,7 @@
 const db = require('../models/index.js');
 const Question = db.questions;
 
+//done
 exports.create = async (req, res) => {
     if(!req.body || !req.params.surveyId ){
         res.status(400).send({
@@ -8,11 +9,9 @@ exports.create = async (req, res) => {
         }) 
         return;
     }
-
-    const questions = req.body.questions.map(o => ({ ...o, surveyId: req.params.surveyId }));
-    console.log("questions:: ", questions)
-    
-    await Question.bulkCreate(questions).then(data => {
+    const question = req.body; 
+    question.surveyId = req.params.surveyId;   
+    await Question.create(question).then(data => {
         res.send(data);
     }).catch(err => {
         res.status(500).send({
@@ -22,6 +21,7 @@ exports.create = async (req, res) => {
     })
 }
 
+//get all questions for a survey
 exports.getAll = async (req, res) => {
   await Question.findAll({}).then(data => {
       res.send(data);
@@ -33,8 +33,7 @@ exports.getAll = async (req, res) => {
   });
 }
 
-//get a single question
-
+//get a single question with question id
 function getSingleQuestion(id) {
     return  Question.findByPk(id, { include: ["survey"] })
   }

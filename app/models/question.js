@@ -15,8 +15,14 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
         key: true,
       },
-
-      // have 4 options fields in case a questions has multiple answer options 
+      questionType:{
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
+      multipleChoice:{
+        type: Sequelize.STRING,
+        allowNull: true
+      }
     });
     return Question;
   };
