@@ -2,32 +2,38 @@
 const sequelize = jest.mock("sequelize");
 //mock out database model
 const db = require("../../app/models");
+const jwt = require("jsonwebtoken");
 db.users = {};
 
 const app = require("../../server.js");
 const request = require("supertest");
 
-describe("users controller", () => {
-  var testUser = {
+var testUser = {
+  username: "AnteSusic21",
+  role: "Admin",
+  email: "ante.susic@eagles.oc.edu",
+  password: "antesusic21",
+  published: false,
+  dataValues: {
     username: "AnteSusic21",
     role: "Admin",
     email: "ante.susic@eagles.oc.edu",
     password: "antesusic21",
     published: false,
-    dataValues: {
-      username: "AnteSusic21",
-      role: "Admin",
-      email: "ante.susic@eagles.oc.edu",
-      password: "antesusic21",
-      published: false,
-    },
-  };
+  },
+};
 
+function generateToken() {
+  return jwt.sign({ testUser }, process.env.SECRET_TOKEN);
+}
+
+describe("users controller", () => {
   describe("get users list", () => {
     it("calls getAll without query", async () => {
       db.users.findAll = jest.fn().mockResolvedValue(Promise.resolve([]));
       await request(app)
         .get("/api/users/")
+        .set("Authorization", "Token " + generateToken())
         .expect(200)
         .then((response) => {
           expect(db.users.findAll).toHaveBeenCalled();
@@ -40,6 +46,7 @@ describe("users controller", () => {
         .mockResolvedValue(Promise.resolve([testUser]));
       await request(app)
         .get("/api/users")
+        .set("Authorization", "Token " + generateToken())
         .expect(200)
         .then((response) => {
           expect(response.body).toHaveLength(1);
@@ -55,6 +62,7 @@ describe("users controller", () => {
         );
       await request(app)
         .get("/api/users")
+        .set("Authorization", "Token " + generateToken())
         .expect(500)
         .then((response) => {
           expect(response.body.message).toBe("Fake error from test");
@@ -67,6 +75,7 @@ describe("users controller", () => {
       db.users.destroy = jest.fn().mockResolvedValue(Promise.resolve(1));
       await request(app)
         .delete("/api/users/1")
+        .set("Authorization", "Token " + generateToken())
         .expect(200)
         .then((response) => {
           expect(db.users.destroy).toHaveBeenCalled();
@@ -77,6 +86,7 @@ describe("users controller", () => {
       db.users.destroy = jest.fn().mockResolvedValue(Promise.resolve(1));
       await request(app)
         .delete("/api/users/1")
+        .set("Authorization", "Token " + generateToken())
         .expect(200)
         .then((response) => {
           expect(response.body.message).toBe("User was deleted successfully!");
@@ -91,6 +101,7 @@ describe("users controller", () => {
         );
       await request(app)
         .delete("/api/users/1")
+        .set("Authorization", "Token " + generateToken())
         .expect(500)
         .then((response) => {
           expect(response.body.message).toBe("Could not delete User with id=1");
@@ -106,6 +117,7 @@ describe("users controller", () => {
       db.users.update = jest.fn().mockResolvedValue(Promise.resolve(1));
       await request(app)
         .post("/api/users/1")
+        .set("Authorization", "Token " + generateToken())
         .send(testUser)
         .expect(200)
         .then((response) => {
@@ -120,6 +132,7 @@ describe("users controller", () => {
       db.users.update = jest.fn().mockResolvedValue(Promise.resolve(1));
       await request(app)
         .post("/api/users/1")
+        .set("Authorization", "Token " + generateToken())
         .send(testUser)
         .expect(200)
         .then((response) => {
@@ -135,6 +148,7 @@ describe("users controller", () => {
         );
       await request(app)
         .post("/api/users/1")
+        .set("Authorization", "Token " + generateToken())
         .expect(500)
         .then((response) => {
           expect(response.body.message).toBe("Fake error from test with id: 1");
@@ -143,25 +157,31 @@ describe("users controller", () => {
   });
   describe("find a single user", () => {
     it("calls find a single user with an id", async () => {
-      db.users.findByPk = jest.fn().mockResolvedValue(Promise.resolve([]));
+      db.users.findOne = jest.fn().mockResolvedValue(Promise.resolve(testUser));
       await request(app)
         .get("/api/users/1")
+        .set("Authorization", "Token " + generateToken())
         .expect(200)
         .then((response) => {
-          expect(db.users.findByPk).toHaveBeenCalled();
+          expect(db.users.findOne).toHaveBeenCalled();
         });
     });
 
+    var testUserResponse = {
+      username: "AnteSusic21",
+      role: "Admin",
+      email: "ante.susic@eagles.oc.edu",
+      published: false,
+    };
+
     it("responds with results from user findOne", async () => {
-      db.users.findByPk = jest
-        .fn()
-        .mockResolvedValue(Promise.resolve([testUser]));
+      db.users.findOne = jest.fn().mockResolvedValue(Promise.resolve(testUser));
       await request(app)
         .get("/api/users/1")
+        .set("Authorization", "Token " + generateToken())
         .expect(200)
         .then((response) => {
-          expect(response.body).toHaveLength(1);
-          expect(response.body[0]).toMatchObject(testUser);
+          expect(response.body).toStrictEqual(testUserResponse);
         });
     });
 
@@ -173,6 +193,7 @@ describe("users controller", () => {
         );
       await request(app)
         .get("/api/users")
+        .set("Authorization", "Token " + generateToken())
         .expect(500)
         .then((response) => {
           expect(response.body.message).toBe("Fake error from test");
@@ -223,7 +244,10 @@ describe("users controller", () => {
         .send(loginCreds)
         .expect(200)
         .then((response) => {
-          expect(response.body).toStrictEqual({
+          expect(!!response.body.token).toBe(true);
+          var apiResponse = response.body;
+          delete apiResponse.token;
+          expect(apiResponse).toStrictEqual({
             id: 1,
             username: "antes21",
             role: "SuperAdmin",
@@ -252,7 +276,7 @@ describe("users controller", () => {
       await request(app)
         .post("/api/users/login")
         .send(badEmailCreds)
-        .expect(400)
+        .expect(404)
         .then((response) => {
           expect(response.body.message).toBe("Cannot find user");
         });
@@ -264,6 +288,7 @@ describe("users controller", () => {
       db.users.create = jest.fn().mockResolvedValue(Promise.resolve(testUser));
       await request(app)
         .post("/api/users/")
+        .set("Authorization", "Token " + generateToken())
         .send(testUser)
         .expect(200)
         .then((response) => {
@@ -275,6 +300,7 @@ describe("users controller", () => {
       db.users.create = jest.fn().mockResolvedValue(Promise.resolve(testUser));
       await request(app)
         .post("/api/users/")
+        .set("Authorization", "Token " + generateToken())
         .send(testUser)
         .expect(200)
         .then((response) => {
@@ -295,6 +321,7 @@ describe("users controller", () => {
         );
       await request(app)
         .post("/api/users/")
+        .set("Authorization", "Token " + generateToken())
         .send(testUser)
         .expect(500)
         .then((response) => {
@@ -310,6 +337,7 @@ describe("users controller", () => {
         );
       await request(app)
         .post("/api/users/")
+        .set("Authorization", "Token " + generateToken())
         .expect(400)
         .then((response) => {
           expect(response.body.message).toBe("User name can not be empty!");
