@@ -56,7 +56,10 @@ exports.logIn = async (req, res) => {
   const user = await User.findOne({ where: { email: email } });
 
   if (!user) {
-    return res.status(404).send("User Not Found");
+    res.status(404).send({
+      message: "Cannot find user",
+    });
+    return;
   }
 
   try {
@@ -72,12 +75,14 @@ exports.logIn = async (req, res) => {
       loginUser.token = jwt.sign({ loginUser }, process.env.SECRET_TOKEN);
       res.send(loginUser);
     } else {
-      res.status(401).send("Invalid password");
+      res.status(401).send({
+        message: "Invalid Password",
+      });
     }
   } catch {
-    res
-      .send(500)
-      .send("Something went wrong while retrieving user information.");
+    res.status(500).send({
+      message: "Something went wrong while retrieving user information.",
+    });
   }
 };
 
@@ -133,7 +138,7 @@ exports.update = async (req, res) => {
       })
       .catch((err) => {
         res.status(500).send({
-          message: err.message + "with id: " + id,
+          message: err.message + " with id: " + id,
         });
       });
   });
