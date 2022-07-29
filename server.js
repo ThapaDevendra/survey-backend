@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const db = require("./app/models/index.js");
 
-db.sequelize.sync();
+//db.sequelize.sync();
 
 //for devel to recreate each time database
 //for devel to recreate each time database

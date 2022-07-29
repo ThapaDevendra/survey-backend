@@ -21,9 +21,17 @@ exports.create = async (req, res) => {
 };
 
 exports.getAll = async (req, res) => {
-  await Survey.findAll({})
+  const userID = req.params.userID;
+  await Survey.findAll({ where: { userID: userID } })
     .then((data) => {
+      if (data.length === 0) {
+        res.status(404).send({
+          message: `Survey for userID ${req.params.userID} not found`,
+        });
+        return;
+      }
       res.send(data);
+      return;
     })
     .catch((err) => {
       res.status(500).send({
@@ -32,30 +40,16 @@ exports.getAll = async (req, res) => {
     });
 };
 
-exports.getSurveyQuestions = async (req, res) => {
-  const id = req.params.surveyId;
-  const data = await Survey.findOne({
-    include: [
-      {
-        model: Question,
-        as: "questions",
-      },
-    ],
-    where: { id: id },
-  });
-  res.status(200).send(data);
-};
-
-function getSingleSurvey(id) {
-  return Survey.findByPk(id, { include: [] });
-}
-
-//Get one single survey
-
 exports.findOne = async (req, res) => {
-  await getSingleSurvey(req.params.id)
+  await getSingleSurvey(req.params.surveyID)
     .then((data) => {
-      res.status(200).send(data);
+      if (!data) {
+        res.status(404).send({
+          message: `Survey with surveyID: ${req.params.surveyID} do not exist`,
+        });
+      } else {
+        res.status(200).send(data);
+      }
       return;
     })
     .catch((err) => {
@@ -64,24 +58,57 @@ exports.findOne = async (req, res) => {
 };
 
 exports.delete = (req, res) => {
-  const id = req.params.id;
-  Question.destroy({
+  const id = req.params.surveyID;
+  Survey.destroy({
     where: { id: id },
   })
     .then((num) => {
       if (num == 1) {
         res.send({
-          message: "Question was deleted successfully!",
+          message: "Survey was deleted successfully!",
         });
       } else {
         res.send({
-          message: `Cannot delete Question with id=${id}. Maybe Question was not found!`,
+          message: `Cannot delete Survey with id=${id}. Maybe Survey was not found!`,
         });
       }
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Could not delete Question with id=" + id,
+        message: "Could not delete Survey with id=" + id,
       });
     });
 };
+
+exports.update = async (req, res) => {
+  const surveyID = req.params.surveyID;
+  if (!surveyID) {
+    res.status(400).send({
+      message: "User survey ID can not be empty!!",
+    });
+    return;
+  }
+  await getSingleSurvey(surveyID).then((data) => {
+    Survey.update(req.body, { where: { id: surveyID } })
+      .then((num) => {
+        if (num == 1) {
+          res.send({
+            message: "Survey name updated successfully.",
+          });
+        } else {
+          res.status(404).send({
+            message: `Survey with id: ${surveyID} not found`,
+          });
+        }
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: err.message + "with id: " + surveyID,
+        });
+      });
+  });
+};
+
+function getSingleSurvey(id) {
+  return Survey.findByPk(id, { include: [] });
+}
