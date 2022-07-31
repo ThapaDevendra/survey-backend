@@ -1,6 +1,7 @@
 const db = require("../models/index.js");
 const Survey = db.surveys;
 const Question = db.questions;
+const Op = db.Sequelize.Op;
 
 exports.create = async (req, res) => {
   if (!req.body.name) {
@@ -112,3 +113,23 @@ exports.update = async (req, res) => {
 function getSingleSurvey(id) {
   return Survey.findByPk(id, { include: [] });
 }
+
+exports.findByName = (req, res) => {
+  const name = req.params.name;
+  Survey.findAll({ where: { name: { [Op.like]: `%${name}%` } } })
+    .then((data) => {
+      console.log(data);
+      if (data) {
+        res.send(data);
+      } else {
+        res.status(404).send({
+          message: `Cannot find Album with title=${name}.`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: "Error retrieving Surveys with name=" + name,
+      });
+    });
+};
