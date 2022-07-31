@@ -68,7 +68,7 @@ exports.logIn = async (req, res) => {
       res.status(401).send('Invalid password')
     }
   }catch{
-    res.send(500).send('Something went wrong while retrieving user information.')
+    res.status(500).send('Something went wrong while retrieving user information.')
   }
     
 
