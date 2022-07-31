@@ -9,5 +9,5 @@ module.exports = app => {
     router.put('/:surveyID', survey.update)
     router.get("/search/:name", survey.findByName);
 
-  app.use("/api/surveys", router);
+  app.use('/api/surveys', router);
 };
