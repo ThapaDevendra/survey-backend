@@ -7,8 +7,7 @@ module.exports = app => {
     router.get('/:surveyID', survey.findOne); 
     router.delete('/:surveyID', survey.delete);
     router.put('/:surveyID', survey.update)
+    router.get("/search/:name", survey.findByName);
 
-    
-
-    app.use('/api/surveys', router);
+  app.use('/api/surveys', router);
 };
