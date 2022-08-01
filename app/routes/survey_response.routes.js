@@ -4,6 +4,7 @@ module.exports = app => {
 
     router.post('/:surveyId/responses/:respondentId', survey_response.create);
     router.get('/:surveyId/responses', survey_response.getAll);
+    router.get('/:surveyId/responses/:respondentId', survey_response.getAllResponseByRespondent);
 
     app.use('/api/surveys', router);
 };

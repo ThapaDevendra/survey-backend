@@ -13,7 +13,7 @@ exports.create = async (req, res) => {
 
     await SurveyResponse.create(req.params).then(data => {
 
-        const responses = req.body.responses.map(o => ({ ...o, surveyResponseId: data.id }));
+        const responses = req.body.responses.map(o => ({ ...o, surveyResponseId: data.id, respondentId: data.respondentId }));
         console.log("responses:: ", responses)
         createResponse(data, responses, res);
 
@@ -38,14 +38,31 @@ const createResponse = async (responseData, responses, res) => {
 }
 
 exports.getAll = async (req, res) => {
-    const surveyId = req.body.surveyId;
-    const respondentId = req.body.respondentId 
+    const surveyId = req.params.surveyId;
     const data =  await SurveyResponse.findAll({
         include: [{
             model: Response,
             as: 'responses'
         }],
-        // , respondentId: respondentId
+        where: { surveyId: surveyId }
+    })
+    .catch(err => {
+        res.status(500).send({
+        message:
+            err.message || "Error occured while retrieving SurveyResponse"
+        });
+    });
+    res.status(200).send(data);
+}
+
+exports.getAllResponseByRespondent = async (req, res) => {
+    const surveyId = req.params.surveyId;
+    const respondentId = req.params.respondentId 
+    const data =  await SurveyResponse.findAll({
+        include: [{
+            model: Response,
+            as: 'responses'
+        }],
         where: { surveyId: surveyId, respondentId: respondentId }
     })
     .catch(err => {
