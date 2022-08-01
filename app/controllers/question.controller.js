@@ -1,19 +1,27 @@
 const db = require('../models/index.js');
+const Respondent = db.respondents;
 const Question = db.questions;
 
 //create questions for survey
 exports.create = async (req, res) => {
-  const question = req.body; 
-  question.surveyId = req.params.surveyId;  
-    if(!question || !question.surveyId ){
+  const question = req.body.questions; 
+  const respondents = req.body.respondents; 
+  question.surveyId = req.params.surveyId;
+  
+  if(!question || !question.surveyId || !respondents){
         res.status(400).send({
-            message: 'surveyId or questions can not be empty!'
+            message: 'surveyId or questions/respondents can not be empty!'
         }) 
         return;
     }
     
-    await Question.create(question).then(data => {
-        res.send(data);
+    // looping through all questions and update surveyId
+    const questions = req.body.questions.map(o => ({ ...o, surveyId: req.params.surveyId }));
+    console.log("questions:: ", questions)
+
+    await Question.bulkCreate(questions).then(data => {
+      saveBulkRespondents(respondents)
+      res.send(data);
     }).catch(err => {
         res.status(500).send({
             message: 
@@ -144,3 +152,7 @@ exports.getSingleQuestion = async(req, res) => {
 }
 
  
+function saveBulkRespondents (respondents) {
+
+  Respondent.bulkCreate(respondents);
+}
