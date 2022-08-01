@@ -94,7 +94,7 @@ exports.update = async (req, res) => {
       .then((num) => {
         if (num == 1) {
           res.send({
-            message: "Survey name updated successfully.",
+            message: "Survey was updated successfully.",
           });
         } else {
           res.status(404).send({
