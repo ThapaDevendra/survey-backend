@@ -3,7 +3,7 @@ module.exports = app => {
     var router = require('express').Router();
 
     
-    router.post('/:surveyId', question.create);
+    router.post('/survey/:surveyId', question.create);
     router.get('/:questionID', question.getSingleQuestion) //get a question
     router.get('/survey/:surveyID', question.getAll); //get all question for a Survey
     router.put('/:questionID', question.update); //update a question
