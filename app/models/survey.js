@@ -13,6 +13,11 @@ module.exports = (sequelize, Sequelize) => {
       userID:{
         type: Sequelize.INTEGER,
         allowNull: false
+      },
+      isClosed:{
+        type: Sequelize.BOOLEAN,
+        allowNull: false, 
+        defaultValue: false
       }
     });
     return Survey;

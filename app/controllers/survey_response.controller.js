@@ -1,17 +1,31 @@
 const db = require('../models/index.js');
+const Survey = db.surveys;
 const SurveyResponse = db.survey_responses;
 const Response = db.responses;
 
 exports.create = async (req, res) => {
-    console.log("req.params:: ", req.params)
-    if(!req.params.surveyId || !req.params.respondentId){
+    const surveyId = req.params.surveyId
+    if(!surveyId || !req.params.respondentId){
         res.status(400).send({
             message: 'surveyId or respondentId can not be empty!'
         }) 
         return;
     }
 
-    await SurveyResponse.create(req.params).then(data => {
+    await getSingleSurvey(surveyId).then((data) => {
+        console.log("data:: ", data)
+    if (!data) {
+        res.status(404).send({
+          message: `This Survey does not exist`,
+        });
+      } else {
+        if(data.isClosed){
+            res.status(400).send({
+                message: 'Survey is already closed'
+            }) 
+            return;
+        }
+         SurveyResponse.create(req.params).then(data => {
 
         const responses = req.body.responses.map(o => ({ ...o, surveyResponseId: data.id, respondentId: data.respondentId }));
         console.log("responses:: ", responses)
@@ -22,6 +36,9 @@ exports.create = async (req, res) => {
             message: 
                 err.message || 'Error occured while creating SurveyResponse.'
         });
+    });
+}
+      return;
     });
 }
 
@@ -73,3 +90,7 @@ exports.getAllResponseByRespondent = async (req, res) => {
     });
     res.status(200).send(data);
 }
+
+function getSingleSurvey(id) {
+    return Survey.findByPk(id, { include: [] });
+  }
