@@ -21,6 +21,7 @@ const db = require("./app/models/index.js");
 //for devel to recreate each time database
 db.sequelize.sync({ force: true }).then(() => {
   console.log("Drop and re-sync db.");
+  
 });
 
 app.get("/", (req, res) => {
