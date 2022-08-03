@@ -16,10 +16,11 @@ exports.create = async (req, res) => {
     }
     
     // looping through all questions and update surveyId
-    const questions = req.body.questions.map(o => ({ ...o, surveyId: req.params.surveyId }));
-    console.log("questions:: ", questions)
-
-    await Question.bulkCreate(questions).then(data => {
+    const questions = req.body.questions.map(o => ({ ...o, surveyId: req.params.surveyId}));
+    console.log('this is questions', questions)
+    const object = questions.map((obj) => {return{text: obj['text'], questionType: obj['questionType'], surveyId: obj['surveyId'], multipleChoices: obj['multipleChoices'].toString()}})
+    
+    await Question.bulkCreate(object).then(data => {
       saveBulkRespondents(respondents)
       res.send(data);
     }).catch(err => {
@@ -29,9 +30,6 @@ exports.create = async (req, res) => {
         });
     })
 }
-
-
-
 
 //get all questions for a survey
 exports.getAll = async (req, res) => {
@@ -46,7 +44,8 @@ exports.getAll = async (req, res) => {
       })
     }
     else{
-      res.send(data);
+      const object = data.map((obj) => {return { text: obj['text'], questionType: obj['questionType'], surveyId: obj['surveyId'], multipleChoices: (obj['multipleChoices']).split(',')}})
+      res.send(object);
     }
     return;
   }).catch(err => {
