@@ -26,8 +26,8 @@ exports.create = async (req, res) => {
             return;
         }
          SurveyResponse.create(req.params).then(data => {
-
-        const responses = req.body.responses.map(o => ({ ...o, surveyResponseId: data.id, respondentId: data.respondentId }));
+            console.log("params:: ", req)
+        const responses = req.body.map(o => ({ ...o, surveyResponseId: data.id, respondentId: data.respondentId }));
         console.log("responses:: ", responses)
         createResponse(data, responses, res);
 
@@ -43,7 +43,7 @@ exports.create = async (req, res) => {
 }
 
 const createResponse = async (responseData, responses, res) => {
-
+    
      await Response.bulkCreate(responses)
      .catch(err => {
         res.status(500).send({
