@@ -44,7 +44,7 @@ exports.getAll = async (req, res) => {
       })
     }
     else{
-      const object = data.map((obj) => {return { text: obj['text'], questionType: obj['questionType'], surveyId: obj['surveyId'], multipleChoices: (obj['multipleChoices']).split(',')}})
+      const object = data.map((obj) => {return { id: obj['id'], text: obj['text'], questionType: obj['questionType'], surveyId: obj['surveyId'], multipleChoices: (obj['multipleChoices']).split(',')}})
       res.send(object);
     }
     return;
