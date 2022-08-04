@@ -16,3 +16,4 @@ module.exports = (app) => {
     
     app.use('/api/users', router);
 };
+
