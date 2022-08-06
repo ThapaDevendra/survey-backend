@@ -14,7 +14,7 @@ exports.create = async (req, res) => {
         }) 
         return;
     }
-    
+    console.log('this is req body:', req.body)
     // looping through all questions and update surveyId
     const questions = req.body.questions.map(o => ({ ...o, surveyId: req.params.surveyId}));
     console.log('this is questions', questions)
